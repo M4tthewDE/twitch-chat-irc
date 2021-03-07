@@ -6,8 +6,6 @@ import (
 	"log"
 )
 
-var DefaultEditor Editor = EditorFunc(simpleEditor)
-
 func main() {
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
@@ -15,13 +13,11 @@ func main() {
 	}
 	defer g.Close()
 
-	g.SetManagerFunc(layout)
-
 	if err := g.SetKeybinding("", rune(113), gocui.ModNone, quit); err != nil {
 		log.Panicln(err)
 	}
 
-	if err := g.SetKeybinding("", rune(97), gocui.ModNone, addChannel); err != nil {
+	if err := g.SetKeybinding("", rune(97), gocui.ModNone, openChannel); err != nil {
 		log.Panicln(err)
 	}
 
@@ -30,19 +26,14 @@ func main() {
 	}
 }
 
-func layout(g *gocui.Gui) error {
+func openChannel(g *gocui.Gui, v *gocui.View) error {
 	maxX, maxY := g.Size()
-	if v, err := g.SetView("hello", 0, 0, maxX/10, maxY-1); err != nil {
+	if v, err := g.SetView("openChannel", (maxX/2)-20, maxY/2, maxX/2+20, maxY/2+2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		fmt.Fprintln(v, []rune("qa"))
+		fmt.Fprintln(v, "Join channel: ")
 	}
-	return nil
-}
-
-func addChannel(g *gocui.Gui, v *gocui.View) error {
-	g.Views()[0].Clear()
 	return nil
 }
 
